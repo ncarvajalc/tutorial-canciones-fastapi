@@ -1,5 +1,7 @@
 from sqlalchemy import String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+import enum
+from sqlalchemy import Enum
 
 
 class Base(DeclarativeBase):
@@ -19,3 +21,19 @@ class Cancion(Base):
         return "{},{},{},{}".format(
             self.titulo, self.minutos, self.segundos, self.interprete
         )
+
+
+class Medio(enum.Enum):
+    DISCO = 1
+    CASETE = 2
+    CD = 3
+
+
+class Album(Base):
+    __tablename__ = "albumes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    titulo: Mapped[str] = mapped_column(String(128))
+    anio: Mapped[int] = mapped_column()
+    descripcion: Mapped[str] = mapped_column(String(512))
+    medio: Mapped[Medio] = mapped_column(Enum(Medio))
