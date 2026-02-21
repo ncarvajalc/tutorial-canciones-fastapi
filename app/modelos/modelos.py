@@ -37,3 +37,11 @@ class Album(Base):
     anio: Mapped[int] = mapped_column()
     descripcion: Mapped[str] = mapped_column(String(512))
     medio: Mapped[Medio] = mapped_column(Enum(Medio))
+
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nombre_usuario: Mapped[str] = mapped_column(String(50))
+    contrasena: Mapped[str] = mapped_column(String(50))
