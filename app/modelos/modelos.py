@@ -1,7 +1,6 @@
-from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import ForeignKey, String, Enum
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 import enum
-from sqlalchemy import Enum
 
 
 class Base(DeclarativeBase):
@@ -37,6 +36,9 @@ class Album(Base):
     anio: Mapped[int] = mapped_column()
     descripcion: Mapped[str] = mapped_column(String(512))
     medio: Mapped[Medio] = mapped_column(Enum(Medio))
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))
+
+    usuario: Mapped["Usuario"] = relationship(back_populates="albums")
 
 
 class Usuario(Base):
@@ -45,3 +47,6 @@ class Usuario(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     nombre_usuario: Mapped[str] = mapped_column(String(50))
     contrasena: Mapped[str] = mapped_column(String(50))
+    albums: Mapped[list["Album"]] = relationship(
+        back_populates="usuario", cascade="all, delete-orphan"
+    )
