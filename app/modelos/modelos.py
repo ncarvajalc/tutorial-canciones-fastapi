@@ -29,11 +29,6 @@ class Cancion(Base):
         back_populates="canciones",
     )
 
-    def __repr__(self):
-        return "{},{},{},{}".format(
-            self.titulo, self.minutos, self.segundos, self.interprete
-        )
-
 
 class Medio(enum.Enum):
     DISCO = 1
