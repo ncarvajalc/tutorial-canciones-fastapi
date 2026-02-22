@@ -28,3 +28,11 @@ class AlbumSchema(BaseModel):
         if medio is None:
             return None
         return {"llave": medio.name, "valor": medio.value}
+
+
+class UsuarioSchema(BaseModel):
+    id: int
+    nombre_usuario: str
+    contrasena: str
+
+    model_config = ConfigDict(from_attributes=True)
