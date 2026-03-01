@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response
 from http import HTTPStatus
+
+from sqlalchemy.exc import IntegrityError
 from app.esquemas import UsuarioCreateSchema, UsuarioSchema, UsuarioUpdateSchema
 from app.modelos import Usuario
 from sqlalchemy.orm import Session
@@ -11,11 +13,18 @@ router = APIRouter(prefix="/signin", tags=["signin"])
 
 @router.post("/", response_model=UsuarioSchema, status_code=HTTPStatus.CREATED)
 def crear_usuario(usuario: UsuarioCreateSchema, db: Session = Depends(get_db)):
-    db_usuario = Usuario(**usuario.model_dump())
-    db.add(db_usuario)
-    db.commit()
-    db.refresh(db_usuario)
-    return db_usuario
+    try:
+        db_usuario = Usuario(**usuario.model_dump())
+        db.add(db_usuario)
+        db.commit()
+        db.refresh(db_usuario)
+        return db_usuario
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail="El nombre de usuario ya existe",
+        )
 
 
 @router.put("/{usuario_id}", response_model=UsuarioSchema)

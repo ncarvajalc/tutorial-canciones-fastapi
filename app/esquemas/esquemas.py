@@ -75,3 +75,8 @@ class UsuarioCreateSchema(UsuarioBase):
 class UsuarioUpdateSchema(UsuarioBase):
     nombre_usuario: Optional[str] = None
     contrasena: Optional[str] = None
+
+
+class LoginSchema(BaseModel):
+    nombre_usuario: str
+    contrasena: str
