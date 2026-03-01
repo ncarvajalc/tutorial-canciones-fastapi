@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from app.core.db import get_db
@@ -10,7 +10,7 @@ from app.modelos import Cancion
 router = APIRouter(prefix="/canciones", tags=["canciones"])
 
 
-@router.post("/", response_model=CancionSchema, status_code=201)
+@router.post("/", response_model=CancionSchema, status_code=HTTPStatus.CREATED)
 def crear_cancion(cancion: CancionCreateSchema, db: Session = Depends(get_db)):
     db_cancion = Cancion(**cancion.model_dump())
     db.add(db_cancion)
@@ -51,3 +51,15 @@ def actualizar_cancion(
     db.commit()
     db.refresh(db_cancion)
     return db_cancion
+
+
+@router.delete("/{cancion_id}", status_code=HTTPStatus.NO_CONTENT)
+def eliminar_cancion(cancion_id: int, db: Session = Depends(get_db)):
+    db_cancion = db.query(Cancion).filter(Cancion.id == cancion_id).first()
+    if db_cancion is None:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Canción no encontrada"
+        )
+    db.delete(db_cancion)
+    db.commit()
+    return Response(status_code=HTTPStatus.NO_CONTENT)
