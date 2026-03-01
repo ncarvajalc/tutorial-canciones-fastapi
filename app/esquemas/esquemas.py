@@ -80,3 +80,8 @@ class UsuarioUpdateSchema(UsuarioBase):
 class LoginSchema(BaseModel):
     nombre_usuario: str
     contrasena: str
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    token_type: str

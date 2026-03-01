@@ -3,25 +3,21 @@ from http import HTTPStatus
 
 from sqlalchemy.exc import IntegrityError
 from app.esquemas import AlbumCreateSchema, AlbumSchema
-from app.modelos import Album, Usuario
+from app.modelos import Album
 from sqlalchemy.orm import Session
 from fastapi.params import Depends
 from app.core.db import get_db
+from app.core.seguridad import verificar_token
 
 router = APIRouter(prefix="/usuarios", tags=["usuarios"])
 
 
-@router.post(
-    "/{usuario_id}/albumes", response_model=AlbumSchema, status_code=HTTPStatus.CREATED
-)
+@router.post("/me/albumes", response_model=AlbumSchema, status_code=HTTPStatus.CREATED)
 def crear_album(
-    usuario_id: int, album: AlbumCreateSchema, db: Session = Depends(get_db)
+    album: AlbumCreateSchema,
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
 ):
-    db_usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
-    if db_usuario is None:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Usuario no encontrado"
-        )
     try:
         db_album = Album(**album.model_dump(), usuario_id=usuario_id)
         db.add(db_album)
@@ -36,11 +32,9 @@ def crear_album(
         )
 
 
-@router.get("/{usuario_id}/albumes", response_model=list[AlbumSchema])
-def obtener_albumes(usuario_id: int, db: Session = Depends(get_db)):
-    db_usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
-    if db_usuario is None:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Usuario no encontrado"
-        )
-    return db_usuario.albumes
+@router.get("/me/albumes", response_model=list[AlbumSchema])
+def obtener_albumes(
+    db: Session = Depends(get_db),
+    usuario_id: int = Depends(verificar_token),
+):
+    return db.query(Album).filter(Album.usuario_id == usuario_id).all()
