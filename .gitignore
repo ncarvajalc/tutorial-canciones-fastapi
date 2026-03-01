@@ -17,3 +17,6 @@ venv.bak/
 
 # MacOS
 .DS_Store
+
+# SQLite database
+*.db

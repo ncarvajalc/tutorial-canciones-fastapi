@@ -3,12 +3,19 @@ from pydantic import BaseModel, ConfigDict, field_serializer
 from app.modelos.modelos import Medio
 
 
-class CancionSchema(BaseModel):
-    id: int
+class CancionBase(BaseModel):
     titulo: str
     minutos: int
     segundos: int
     interprete: str
+
+
+class CancionCreateSchema(CancionBase):
+    pass
+
+
+class CancionSchema(CancionBase):
+    id: int
 
     model_config = ConfigDict(from_attributes=True)
 
