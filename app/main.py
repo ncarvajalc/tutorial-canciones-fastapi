@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from app.core.db import init_db
 from app.rutas.canciones import router as canciones_router
+from app.rutas.signin import router as signin_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -14,3 +16,4 @@ app = FastAPI(
 )
 
 app.include_router(canciones_router)
+app.include_router(signin_router)

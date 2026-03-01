@@ -45,9 +45,21 @@ class AlbumSchema(BaseModel):
         return {"llave": medio.name, "valor": medio.value}
 
 
-class UsuarioSchema(BaseModel):
-    id: int
+class UsuarioBase(BaseModel):
     nombre_usuario: str
     contrasena: str
 
+
+class UsuarioSchema(UsuarioBase):
+    id: int
+
     model_config = ConfigDict(from_attributes=True)
+
+
+class UsuarioCreateSchema(UsuarioBase):
+    pass
+
+
+class UsuarioUpdateSchema(UsuarioBase):
+    nombre_usuario: Optional[str] = None
+    contrasena: Optional[str] = None
