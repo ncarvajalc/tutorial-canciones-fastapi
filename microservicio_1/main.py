@@ -2,8 +2,13 @@ import httpx
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from celery import Celery
 
 app = FastAPI(title="Microservicio 1 - Puntaje Canciones", root_path="/proxy/8001")
+
+celery_app = Celery(
+    broker="redis://localhost:6379/0",
+)
 
 CANCIONES_APP_URL = "http://localhost:8000"
 
@@ -21,4 +26,5 @@ def agregar_puntaje(cancion_id: int, puntaje: PuntajeSchema):
 
     cancion = response.json()
     cancion["puntaje"] = puntaje.puntaje
+    celery_app.send_task("tabla.registrar_puntaje", args=[cancion])
     return cancion
