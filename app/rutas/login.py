@@ -1,15 +1,16 @@
 from fastapi import APIRouter, HTTPException
 from http import HTTPStatus
-from app.esquemas import LoginSchema
+from app.esquemas import LoginSchema, TokenSchema
 from app.modelos import Usuario
 from sqlalchemy.orm import Session
 from fastapi.params import Depends
 from app.core.db import get_db
+from app.core.seguridad import crear_token
 
 router = APIRouter(prefix="/login", tags=["login"])
 
 
-@router.post("/", status_code=HTTPStatus.OK)
+@router.post("/", response_model=TokenSchema, status_code=HTTPStatus.OK)
 def login(login: LoginSchema, db: Session = Depends(get_db)):
     db_usuario = (
         db.query(Usuario)
@@ -24,4 +25,6 @@ def login(login: LoginSchema, db: Session = Depends(get_db)):
             status_code=HTTPStatus.UNAUTHORIZED,
             detail="Nombre de usuario o contraseña incorrectos",
         )
-    return {"mensaje": "Inicio de sesión exitoso"}
+    return TokenSchema(
+        access_token=crear_token(db_usuario.id), token_type="bearer"
+    )

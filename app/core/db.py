@@ -2,7 +2,7 @@ from typing import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from app.modelos import Base, Cancion
+from app.modelos import Base
 
 engine = create_engine("sqlite:///./canciones.db")
 
