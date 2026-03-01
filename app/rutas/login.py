@@ -5,7 +5,7 @@ from app.modelos import Usuario
 from sqlalchemy.orm import Session
 from fastapi.params import Depends
 from app.core.db import get_db
-from app.tareas import registrar_login
+from app.core.celery_client import celery_client
 
 router = APIRouter(prefix="/login", tags=["login"])
 
@@ -25,5 +25,5 @@ def login(login: LoginSchema, db: Session = Depends(get_db)):
             status_code=HTTPStatus.UNAUTHORIZED,
             detail="Nombre de usuario o contraseña incorrectos",
         )
-    registrar_login.delay(db_usuario.nombre_usuario)
+    celery_client.send_task("tareas.registrar_login", args=[db_usuario.nombre_usuario])
     return {"mensaje": "Inicio de sesión exitoso"}
