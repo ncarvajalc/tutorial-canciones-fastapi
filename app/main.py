@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.db import init_db
 from app.rutas.canciones import router as canciones_router
 from app.rutas.signin import router as signin_router
@@ -17,6 +18,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Tutorial Canciones FastAPI", root_path="/proxy/8000", lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(canciones_router)
