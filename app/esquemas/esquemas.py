@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, field_serializer
 
 from app.modelos.modelos import Medio
@@ -12,6 +13,13 @@ class CancionBase(BaseModel):
 
 class CancionCreateSchema(CancionBase):
     pass
+
+
+class CancionUpdateSchema(CancionBase):
+    titulo: Optional[str] = None
+    minutos: Optional[int] = None
+    segundos: Optional[int] = None
+    interprete: Optional[str] = None
 
 
 class CancionSchema(CancionBase):
