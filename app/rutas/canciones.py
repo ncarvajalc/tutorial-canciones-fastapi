@@ -16,3 +16,7 @@ def crear_cancion(cancion: CancionCreateSchema, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_cancion)
     return db_cancion
+
+@router.get("/", response_model=list[CancionSchema])
+def obtener_canciones(db: Session = Depends(get_db)):
+    return db.query(Cancion).all()
