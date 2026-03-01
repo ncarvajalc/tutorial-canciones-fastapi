@@ -38,7 +38,9 @@ class Medio(enum.Enum):
 
 class Album(Base):
     __tablename__ = "albumes"
-    __table_args__ = (UniqueConstraint("usuario_id", "titulo", name="uq_album_usuario_titulo"),)
+    __table_args__ = (
+        UniqueConstraint("usuario_id", "titulo", name="uq_album_usuario_titulo"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     titulo: Mapped[str] = mapped_column(String(128))
@@ -58,7 +60,7 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    nombre_usuario: Mapped[str] = mapped_column(String(50))
+    nombre_usuario: Mapped[str] = mapped_column(String(50), unique=True)
     contrasena: Mapped[str] = mapped_column(String(50))
     albumes: Mapped[list["Album"]] = relationship(
         back_populates="usuario", cascade="all, delete-orphan"
