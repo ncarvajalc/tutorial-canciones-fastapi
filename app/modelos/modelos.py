@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, String, Enum, Table, Column
+from sqlalchemy import ForeignKey, String, Enum, Table, Column, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 import enum
 
@@ -38,6 +38,7 @@ class Medio(enum.Enum):
 
 class Album(Base):
     __tablename__ = "albumes"
+    __table_args__ = (UniqueConstraint("usuario_id", "titulo", name="uq_album_usuario_titulo"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     titulo: Mapped[str] = mapped_column(String(128))

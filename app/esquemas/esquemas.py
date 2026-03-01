@@ -28,13 +28,15 @@ class CancionSchema(CancionBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class AlbumSchema(BaseModel):
-    id: int
+class AlbumBase(BaseModel):
     titulo: str
     anio: int
     descripcion: str
     medio: Medio
-    usuario_id: int
+
+
+class AlbumSchema(AlbumBase):
+    id: int
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -43,6 +45,16 @@ class AlbumSchema(BaseModel):
         if medio is None:
             return None
         return {"llave": medio.name, "valor": medio.value}
+
+
+class AlbumCreateSchema(AlbumBase):
+    pass
+
+
+class AlbumUpdateSchema(AlbumBase):
+    titulo: Optional[str] = None
+    anio: Optional[int] = None
+    descripcion: Optional[str] = None
 
 
 class UsuarioBase(BaseModel):
