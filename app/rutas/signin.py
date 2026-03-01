@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from http import HTTPStatus
 from app.esquemas import UsuarioCreateSchema, UsuarioSchema, UsuarioUpdateSchema
 from app.modelos import Usuario
@@ -33,3 +33,15 @@ def actualizar_usuario(
     db.commit()
     db.refresh(db_usuario)
     return db_usuario
+
+
+@router.delete("/{usuario_id}", status_code=HTTPStatus.NO_CONTENT)
+def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
+    db_usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
+    if db_usuario is None:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Usuario no encontrado"
+        )
+    db.delete(db_usuario)
+    db.commit()
+    return Response(status_code=HTTPStatus.NO_CONTENT)
